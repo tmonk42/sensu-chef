@@ -12,4 +12,11 @@ group :develop do
   gem "guard-foodcritic"
   gem "guard-rspec"
   gem "guard-rubocop"
+  gem "test-kitchen"
+  gem "kitchen-vagrant"
+  gem "berkshelf"
+  gem "winrm"
+  gem "winrm-fs"
+  gem "winrm-elevated"
+  gem "chefspec"
 end

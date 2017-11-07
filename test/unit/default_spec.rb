@@ -2,6 +2,21 @@ require_relative "spec_helper"
 require_relative "common_examples"
 
 describe "sensu::default" do
+  # before(:each) do
+  #   stub_data_bag_item('sensu', 'ssl').and_return(
+  #     'id' => 'ssl',
+  #     'client' => {
+  #       'cert' => '',
+  #       'key' => '',
+  #     },
+  #     'server' => {
+  #       'cert' => '',
+  #       'key' => '',
+  #       'cacert' => '',
+  #     }
+  #   )
+  # end
+
   include_context("sensu data bags")
 
   context "when running on unix-like platforms" do
@@ -11,7 +26,7 @@ describe "sensu::default" do
 
     context "when running on ubuntu linux" do
       let(:chef_run) do
-        ChefSpec::ServerRunner.new(:platform => "ubuntu", :version => "16.04") do |node, server|
+        ChefSpec::ServerRunner.new(:platform => "ubuntu", :version => "16.04") do |_node, server|
           server.create_data_bag("sensu", ssl_data_bag_item)
         end.converge(described_recipe)
       end
@@ -46,7 +61,7 @@ describe "sensu::default" do
 
     context "when running on rhel linux" do
       let(:chef_run) do
-        ChefSpec::ServerRunner.new(:platform => "redhat", :version => "7.3") do |node, server|
+        ChefSpec::ServerRunner.new(:platform => "redhat", :version => "7.3") do |_node, server|
           server.create_data_bag("sensu", ssl_data_bag_item)
         end.converge(described_recipe)
       end
@@ -69,7 +84,7 @@ describe "sensu::default" do
         let(:chef_run) do
           ChefSpec::ServerRunner.new(:platform => "redhat", :version => "7.3") do |node, server|
             server.create_data_bag("sensu", ssl_data_bag_item)
-            node.set["sensu"]["yum_repo_releasever"] = "dory"
+            node.override["sensu"]["yum_repo_releasever"] = "dory"
           end.converge(described_recipe)
         end
 
@@ -81,7 +96,7 @@ describe "sensu::default" do
 
     context "when running on aix" do
       let(:chef_run) do
-        ChefSpec::ServerRunner.new(:platform => "aix", :version => "7.1") do |node, server|
+        ChefSpec::ServerRunner.new(:platform => "aix", :version => "7.1") do |_node, server|
           server.create_data_bag("sensu", ssl_data_bag_item)
         end.converge(described_recipe)
       end
@@ -139,5 +154,4 @@ describe "sensu::default" do
 
     it_behaves_like('sensu default recipe')
   end
-
 end

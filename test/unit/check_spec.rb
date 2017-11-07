@@ -1,11 +1,11 @@
 require_relative 'spec_helper'
 
 describe 'sensu-test::good_checks' do
-  let(:chef_run) {
+  let(:chef_run) do
     ChefSpec::SoloRunner.new(:platform => 'ubuntu', :version => '14.04').converge(
       described_recipe
     )
-  }
+  end
 
   it "creates valid_standalone_check sensu_check" do
     expect(chef_run).to create_sensu_check("valid_standalone_check").with(:standalone => true)
@@ -21,15 +21,14 @@ describe 'sensu-test::good_checks' do
       :standalone => nil
     )
   end
-
 end
 
 describe 'sensu-test::bad_check_name' do
-  let(:chef_run) {
+  let(:chef_run) do
     ChefSpec::SoloRunner.new(:platform => 'ubuntu', :version => '14.04').converge(
       described_recipe
     )
-  }
+  end
 
   it "raises an exception when the check name contains invalid characters" do
     expect { chef_run }.to raise_error(Chef::Exceptions::ValidationFailed)
@@ -37,11 +36,11 @@ describe 'sensu-test::bad_check_name' do
 end
 
 describe 'sensu-test::bad_check_attributes' do
-  let(:chef_run) {
+  let(:chef_run) do
     ChefSpec::SoloRunner.new(:platform => 'ubuntu', :version => '14.04').converge(
       described_recipe
     )
-  }
+  end
 
   it "raises an exception when the check has neither subscribers nor standalone attributes" do
     expect { chef_run }.to raise_error(Chef::Exceptions::ValidationFailed)

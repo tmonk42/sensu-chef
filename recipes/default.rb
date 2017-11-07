@@ -41,12 +41,12 @@ directory node["sensu"]["log_directory"] do
   mode node["sensu"]["log_directory_mode"]
 end
 
-%w[
+%w(
   conf.d
   plugins
   handlers
   extensions
-].each do |dir|
+).each do |dir|
   directory File.join(node["sensu"]["directory"], dir) do
     owner node["sensu"]["user"]
     group node["sensu"]["group"]
@@ -71,7 +71,7 @@ if node["sensu"]["use_ssl"]
 
   begin
     unless get_sensu_state(node, "ssl")
-      ssl_data = Sensu::Helpers.data_bag_item(ssl_item, false, data_bag_name).to_hash
+      ssl_data = data_bag_item(data_bag_name, ssl_item).to_hash # missingok: false ???
       set_sensu_state(node, "ssl", ssl_data)
     end
   rescue => e

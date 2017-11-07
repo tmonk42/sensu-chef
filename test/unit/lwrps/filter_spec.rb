@@ -21,8 +21,8 @@ describe 'sensu_filter' do
       f = '/etc/sensu/conf.d/filters/always.json'
       expected = {
         'filters' => {
-          'always' => { :attributes => { :check => { :timestamp => 'eval: true' } } }
-        }
+          'always' => { :attributes => { :check => { :timestamp => 'eval: true' } } },
+        },
       }
       expect(chef_run).to create_sensu_json_file(f).with(:content => expected)
     end
@@ -34,9 +34,9 @@ describe 'sensu_filter' do
           'filters' => {
             'never' => {
               :attributes => { :check => { :timestamp => 'eval: true' } },
-              :negate => true
-            }
-          }
+              :negate => true,
+            },
+          },
         }
         expect(chef_run).to create_sensu_json_file(f).with(:content => expected)
       end
@@ -50,9 +50,9 @@ describe 'sensu_filter' do
             'filters' => {
               'daytime' => {
                 :attributes => { :check => { :timestamp => 'eval: true' } },
-                :when => { :days => { :all => [{ :begin => '09:00 AM', :end => '05:00 PM' }] } }
-              }
-            }
+                :when => { :days => { :all => [{ :begin => '09:00 AM', :end => '05:00 PM' }] } },
+              },
+            },
           }
           expect(chef_run).to create_sensu_json_file(f).with(:content => expected)
         end
@@ -65,9 +65,9 @@ describe 'sensu_filter' do
             'filters' => {
               'nighttime' => {
                 :attributes => { 'check' => { 'timestamp' => 'eval: true' } },
-                :when => { :days => { 'all' => [{ 'begin' => '05:00 PM', 'end' => '09:00 AM' }] } }
-              }
-            }
+                :when => { :days => { 'all' => [{ 'begin' => '05:00 PM', 'end' => '09:00 AM' }] } },
+              },
+            },
           }
           expect(chef_run).to create_sensu_json_file(f).with(:content => expected)
         end

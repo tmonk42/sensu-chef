@@ -1,10 +1,10 @@
 def manage_sensu_asset(resource_action)
   attributes = Sensu::Helpers.select_attributes(
     new_resource,
-    %w[
+    %w(
       cookbook source source_directory checksum
       path mode owner group rights
-    ]
+    )
   )
 
   a = sensu_asset new_resource.name do
@@ -19,9 +19,9 @@ def manage_sensu_asset(resource_action)
 end
 
 [
- :create,
- :create_if_missing,
- :delete
+  :create,
+  :create_if_missing,
+  :delete,
 ].each do |resource_action|
   action resource_action do
     manage_sensu_asset(resource_action)

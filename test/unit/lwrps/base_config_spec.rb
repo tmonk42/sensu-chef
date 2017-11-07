@@ -2,6 +2,14 @@ require_relative "../spec_helper"
 require 'json'
 
 describe "sensu_base_config" do
+  before(:each) do
+    stub_data_bag_item('sensu', 'config').and_return(
+      "id" => "sensu"
+    )
+    stub_data_bag_item('sensu', 'ssl').and_return(
+      "id" => "ssl"
+    )
+  end
 
   let(:single_broker_config) do
     {
@@ -14,15 +22,15 @@ describe "sensu_base_config" do
       "prefetch" => 50,
       "ssl" => {
         "cert_chain_file" => "/etc/sensu/ssl/cert.pem",
-        "private_key_file" => "/etc/sensu/ssl/key.pem"
+        "private_key_file" => "/etc/sensu/ssl/key.pem",
       },
-      "single_broker" => true
+      "single_broker" => true,
     }
   end
 
   let(:multiple_broker_config) do
     {
-      "hosts" => [ "10.0.0.6", "10.0.0.7", "10.0.0.8" ],
+      "hosts" => ["10.0.0.6", "10.0.0.7", "10.0.0.8"],
       "host" => "192.168.1.1",
       "port" => 5671,
       "vhost" => "/sensu",
@@ -32,8 +40,8 @@ describe "sensu_base_config" do
       "prefetch" => 50,
       "ssl" => {
         "cert_chain_file" => "/etc/sensu/ssl/cert.pem",
-        "private_key_file" => "/etc/sensu/ssl/key.pem"
-      }
+        "private_key_file" => "/etc/sensu/ssl/key.pem",
+      },
     }
   end
 
@@ -49,8 +57,8 @@ describe "sensu_base_config" do
         "prefetch" => 50,
         "ssl" => {
           "cert_chain_file" => "/etc/sensu/ssl/cert.pem",
-          "private_key_file" => "/etc/sensu/ssl/key.pem"
-        }
+          "private_key_file" => "/etc/sensu/ssl/key.pem",
+        },
       },
       {
         "host" => "10.0.0.7",
@@ -62,8 +70,8 @@ describe "sensu_base_config" do
         "prefetch" => 50,
         "ssl" => {
           "cert_chain_file" => "/etc/sensu/ssl/cert.pem",
-          "private_key_file" => "/etc/sensu/ssl/key.pem"
-        }
+          "private_key_file" => "/etc/sensu/ssl/key.pem",
+        },
       },
       {
         "host" => "10.0.0.8",
@@ -75,9 +83,9 @@ describe "sensu_base_config" do
         "prefetch" => 50,
         "ssl" => {
           "cert_chain_file" => "/etc/sensu/ssl/cert.pem",
-          "private_key_file" => "/etc/sensu/ssl/key.pem"
-        }
-      }
+          "private_key_file" => "/etc/sensu/ssl/key.pem",
+        },
+      },
     ]
   end
 
@@ -85,7 +93,7 @@ describe "sensu_base_config" do
     ChefSpec::SoloRunner.new(
       :platform => "ubuntu",
       :version => "14.04",
-      :step_into => ['sensu_base_config', 'sensu_json_file']
+      :step_into => %w(sensu_base_config sensu_json_file)
     ) do |node|
       node.override["sensu"]["transport"]["chefspec"] = true
       node.override["sensu"]["redis"]["chefspec"] = true
@@ -101,7 +109,7 @@ describe "sensu_base_config" do
   end
 
   context "base configuration is derived from node attributes" do
-    %w[ transport redis api ].each do |kw|
+    %w( transport redis api ).each do |kw|
       it "#{kw} node attributes are present in base configuration" do
         content = JSON.parse(base_config_json.content)
         expect(content[kw]["chefspec"]).to eq(true)
@@ -119,7 +127,6 @@ describe "sensu_base_config" do
   end
 
   context "multiple rabbitmq hosts provided" do
-
     before do
       chef_run.node.override["sensu"]["rabbitmq"] = multiple_broker_config
       chef_run.converge("sensu::default")
@@ -131,5 +138,4 @@ describe "sensu_base_config" do
       expect(content["rabbitmq"]).to eq(multiple_broker_json)
     end
   end
-
 end

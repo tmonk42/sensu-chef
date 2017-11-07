@@ -11,7 +11,7 @@ module Sensu
       end
 
       def sanitize(raw_hash)
-        sanitized = Hash.new
+        sanitized = {}
         raw_hash.each do |key, value|
           # Expand Chef::DelayedEvaluator (lazy)
           value = value.call if value.respond_to?(:call)
@@ -21,6 +21,7 @@ module Sensu
             sanitized[key] = sanitize(value) unless value.empty?
           when nil
             # noop
+            nil
           else
             sanitized[key] = value
           end
@@ -29,70 +30,44 @@ module Sensu
       end
 
       def gem_binary
-        if File.exists?("/opt/sensu/embedded/bin/gem")
+        if File.exist?("/opt/sensu/embedded/bin/gem")
           "/opt/sensu/embedded/bin/gem"
-        elsif File.exists?('c:\opt\sensu\embedded\bin\gem.bat')
+        elsif File.exist?('c:\opt\sensu\embedded\bin\gem.bat')
           'c:\opt\sensu\embedded\bin\gem.bat'
         else
           "gem"
         end
       end
 
-      def data_bag_item(item, missing_ok=false, data_bag_name="sensu")
-        raw_hash = Chef::DataBagItem.load(data_bag_name, item).delete_if { |k,v| k == "id" }
-        encrypted = raw_hash.detect do |key, value|
-          if value.is_a?(Hash)
-            value.has_key?("encrypted_data")
-          end
-        end
-        if encrypted
-          if Chef::DataBag.load(data_bag_name).key? "#{item}_keys"
-            chef_vault_item(data_bag_name, item)
-          else
-            secret = Chef::EncryptedDataBagItem.load_secret
-            Chef::EncryptedDataBagItem.new(raw_hash, secret)
-          end
-        else
-          raw_hash
-        end
-      rescue Chef::Exceptions::ValidationFailed,
-        Chef::Exceptions::InvalidDataBagPath,
-        Net::HTTPServerException => error
-        missing_ok ? nil : raise(error)
-      end
-
-      def random_password(length=20, number=false, upper=false, lower=false, special=false)
+      def random_password(length = 20, number = false, upper = false, lower = false, special = false)
         password = ""
-        requiredOffset = 0
-        requiredOffset += 1 if number
-        requiredOffset += 1 if upper
-        requiredOffset += 1 if lower
-        requiredOffset += 1 if special
-        length = requiredOffset if length < requiredOffset
-        limit = password.length < (length - requiredOffset)
+        required_offset = 0
+        required_offset += 1 if number
+        required_offset += 1 if upper
+        required_offset += 1 if lower
+        required_offset += 1 if special
+        length = required_offset if length < required_offset
+        limit = password.length < (length - required_offset)
 
-        while limit || requiredOffset > 0
-          push = false
+        while limit || required_offset > 0
           c = ::OpenSSL::Random.random_bytes(1).gsub(/\W/, '')
           if c != ""
             if c =~ /[[:digit:]]/
-              requiredOffset -= 1 if number
+              required_offset -= 1 if number
               number = false
             elsif c >= 'a' && c <= 'z'
-              requiredOffset -= 1 if lower
+              required_offset -= 1 if lower
               lower = false
             elsif c >= 'A' && c <= 'Z'
-              requiredOffset -= 1 if upper
+              required_offset -= 1 if upper
               upper = false
             else
-              requiredOffset -= 1 if special
+              required_offset -= 1 if special
               special = false
             end
           end
-          limit = password.length < (length - requiredOffset)
-          if limit
-            password << c
-          end
+          limit = password.length < (length - required_offset)
+          password << c if limit
         end
         password
       end
@@ -107,7 +82,11 @@ module Sensu
       def windows_user_exists?(user)
         if defined?(Win32)
           net_user = Chef::Util::Windows::NetUser.new(user)
-          !!net_user.get_info rescue false
+          begin
+            !!net_user.get_info
+          rescue
+            false
+          end
         else
           false
         end
@@ -145,7 +124,6 @@ module Sensu
           [sensu_version, suffix].join
         end
       end
-
     end
   end
 end

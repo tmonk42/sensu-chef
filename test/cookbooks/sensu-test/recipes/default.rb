@@ -42,8 +42,6 @@ include_recipe "sensu::client_service"
 
 # ServerSpec dependencies
 
-if platform?("ubuntu")
-  package "net-tools"
-end
+package "net-tools" if platform?("ubuntu")
 
 include_recipe "sensu-test::gem_lwrp"

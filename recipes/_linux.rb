@@ -57,11 +57,13 @@ when "suse"
   # version, e.g. ".el7". Override default via node["sensu"]["version_suffix"]
   # attribute.
   zypper_package "sensu" do
-    version lazy { "1:" + Sensu::Helpers.redhat_version_string(
-      node["sensu"]["version"],
+    version lazy {
+      "1:" + Sensu::Helpers.redhat_version_string(
+        node["sensu"]["version"],
       7,
       node["sensu"]["version_suffix"]
-    )}
+      )
+    }
     notifies :create, "ruby_block[sensu_service_trigger]"
   end
 when "rhel", "fedora", "amazon"
@@ -79,11 +81,13 @@ when "rhel", "fedora", "amazon"
   # version, e.g. ".el7". Override default via node["sensu"]["version_suffix"]
   # attribute.
   yum_package "sensu" do
-    version lazy { Sensu::Helpers.redhat_version_string(
-      node["sensu"]["version"],
+    version lazy {
+      Sensu::Helpers.redhat_version_string(
+        node["sensu"]["version"],
       node["platform_version"],
       node["sensu"]["version_suffix"]
-    )}
+      )
+    }
     allow_downgrade true
     notifies :create, "ruby_block[sensu_service_trigger]"
   end

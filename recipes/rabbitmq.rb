@@ -37,17 +37,17 @@ if node["sensu"]["use_ssl"]
   begin
     unless get_sensu_state(node, "ssl")
       ssl_item = node["sensu"]["data_bag"]["ssl_item"]
-      ssl = Sensu::Helpers.data_bag_item(ssl_item, false, data_bag_name)
+      ssl = data_bag_item(data_bag_name, ssl_item) # missingok: false ???
     end
   rescue => e
     Chef::Log.warn("Failed to populate Sensu state with ssl credentials from data bag: " + e.inspect)
   end
 
-  %w[
+  %w(
     cacert
     cert
     key
-  ].each do |item|
+  ).each do |item|
     path = File.join(ssl_directory, "#{item}.pem")
     file path do
       content lazy { get_sensu_state(node, "ssl", "server", item) }
@@ -62,10 +62,10 @@ if node["sensu"]["use_ssl"]
     mode '0755'
   end
 
-  %w[
+  %w(
     cert
     key
-  ].each do |item|
+  ).each do |item|
     path = File.join(ssl_directory, "client", "#{item}.pem")
     file path do
       content lazy { get_sensu_state(node, "ssl", "client", item) }
@@ -82,7 +82,7 @@ node.override["erlang"]["install_method"] = "esl"
 include_recipe "rabbitmq"
 include_recipe "rabbitmq::mgmt_console"
 
-service "restart #{node["rabbitmq"]["service_name"]}" do
+service "restart #{node['rabbitmq']['service_name']}" do
   service_name node["rabbitmq"]["service_name"]
   action :nothing
   subscribes :restart, resources("template[#{node['rabbitmq']['config_root']}/rabbitmq.config]"), :immediately
@@ -91,7 +91,7 @@ end
 rabbitmq = node["sensu"]["rabbitmq"].to_hash
 
 config_item = node["sensu"]["data_bag"]["config_item"]
-sensu_config = Sensu::Helpers.data_bag_item(config_item, true, data_bag_name)
+sensu_config = data_bag_item(data_bag_name, config_item) # missingok: true ???
 
 if sensu_config && sensu_config["rabbitmq"].is_a?(Hash)
   rabbitmq = Chef::Mixin::DeepMerge.merge(rabbitmq, sensu_config["rabbitmq"])
@@ -104,12 +104,12 @@ rabbitmq_credentials "general" do
   permissions rabbitmq["permissions"]
 end
 
-%w[
+%w(
   client
   api
   server
-].each do |service|
-  service_config = Sensu::Helpers.data_bag_item(service, true, data_bag_name)
+).each do |service|
+  service_config = data_bag_item(data_bag_name, service) # missingok: true ???
 
   next unless service_config && service_config["rabbitmq"].is_a?(Hash)
 

@@ -14,8 +14,8 @@ action :create do
 
   definition = {
     "filters" => {
-      new_resource.name => Sensu::Helpers.sanitize(filter)
-    }
+      new_resource.name => Sensu::Helpers.sanitize(filter),
+    },
   }
 
   f = sensu_json_file @definition_path do

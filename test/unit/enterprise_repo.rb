@@ -7,10 +7,10 @@ describe "sensu::_enterprise_repo" do
         "repository" => {
           "credentials" => {
             "user" => "chefspec",
-            "password" => "moartests!"
-          }
-        }
-      }
+            "password" => "moartests!",
+          },
+        },
+      },
     }
   end
 
@@ -29,7 +29,7 @@ describe "sensu::_enterprise_repo" do
             :uri => "http://chefspec:moartests!@enterprise.sensuapp.com/apt",
             :key => "http://chefspec:moartests!@enterprise.sensuapp.com/apt/pubkey.gpg",
             :distribution => "sensu-enterprise",
-            :components => repo_designation == "unstable" ?  ["unstable"] : ["main"]
+            :components => repo_designation == "unstable" ? ["unstable"] : ["main"]
           )
         end
       end
@@ -45,14 +45,13 @@ describe "sensu::_enterprise_repo" do
             :uri => "http://chefspec:moartests!@chefspec.example.com/apt",
             :key => "http://chefspec:moartests!@chefspec.example.com/apt/pubkey.gpg",
             :distribution => "sensu-enterprise",
-            :components => repo_designation == "unstable" ?  ["unstable"] : ["main"]
+            :components => repo_designation == "unstable" ? ["unstable"] : ["main"]
           )
         end
       end
     end
 
     context "yum platforms" do
-
       let(:chef_run) do
         ChefSpec::ServerRunner.new(:platform => "centos", :version => "6.6") do |node, server|
           node.override["sensu"]["enterprise"]["use_unstable_repo"] = true unless repo_designation == "stable"
@@ -92,6 +91,5 @@ describe "sensu::_enterprise_repo" do
         end
       end
     end
-
   end
 end

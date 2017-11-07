@@ -6,13 +6,13 @@ end
 action :create do
   mutator = Sensu::Helpers.select_attributes(
     new_resource,
-    %w[command timeout]
+    %w(command timeout)
   )
 
   definition = {
     "mutators" => {
-      new_resource.name => Sensu::Helpers.sanitize(mutator)
-    }
+      new_resource.name => Sensu::Helpers.sanitize(mutator),
+    },
   }
 
   f = sensu_json_file @definition_path do

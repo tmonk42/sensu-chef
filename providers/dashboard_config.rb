@@ -1,13 +1,13 @@
 action :create do
   definitions = Sensu::Helpers.select_attributes(
     node["sensu"]["enterprise-dashboard"],
-    %w[dashboard sensu]
+    %w(dashboard sensu)
   )
 
   data_bag_name = node["sensu"]["enterprise-dashboard"]["data_bag"]["name"]
   config_item = node["sensu"]["enterprise-dashboard"]["data_bag"]["config_item"]
 
-  config = Sensu::Helpers.data_bag_item(config_item, true, data_bag_name)
+  config = data_bag_item(data_bag_name, config_item) # missingok: true ???
 
   if config
     definitions = Chef::Mixin::DeepMerge.merge(definitions, config.to_hash)

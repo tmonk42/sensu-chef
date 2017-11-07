@@ -5,7 +5,7 @@ end
 
 action :create do
   definition = {
-    new_resource.name => new_resource.content
+    new_resource.name => new_resource.content,
   }
 
   f = sensu_json_file @definition_path do

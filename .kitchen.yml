@@ -4,13 +4,15 @@ driver:
 
 provisioner:
   name: chef_zero
+  deprecations_as_errors: true
+  resource_cloning: false
 
 platforms:
-  - name: ubuntu-12.04
+  # - name: ubuntu-12.04 # Not supported by rabbitmq cookbook
   - name: ubuntu-14.04
   - name: ubuntu-16.04
-  - name: centos-5.11
-  - name: centos-6.8
+  # - name: centos-5.11 # EOL
+  # - name: centos-6.8 # https://github.com/brianbianco/redisio/issues/345
   - name: centos-7.3
   - name: windows-2008-r2
     transport:

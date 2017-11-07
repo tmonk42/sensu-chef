@@ -10,18 +10,18 @@ RSpec.shared_context('sensu data bags') do
       'ssl' => {
         'client' => {
           'cert' => '',
-          'key' => ''
+          'key' => '',
         },
         'server' => {
           'cert' => '',
           'key' => '',
-          'cacert' => ''
-        }
+          'cacert' => '',
+        },
       },
       'config' => {
       },
       'enterprise' => {
-      }
+      },
     }
   end
 end

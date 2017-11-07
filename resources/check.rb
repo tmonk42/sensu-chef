@@ -2,7 +2,7 @@ actions :create, :delete
 default_action :create
 
 # 'standard' and 'status' types are synonymous
-attribute :type, :kind_of => String, :equal_to => %w[standard status metric]
+attribute :type, :kind_of => String, :equal_to => %w(standard status metric)
 attribute :command, :kind_of => String, :required => true
 attribute :timeout, :kind_of => Integer
 attribute :subscribers, :kind_of => Array
@@ -16,7 +16,7 @@ attribute :publish, :kind_of => [TrueClass, FalseClass]
 attribute :subdue, :kind_of => Hash
 attribute :low_flap_threshold, :kind_of => Integer
 attribute :high_flap_threshold, :kind_of => Integer
-attribute :additional, :kind_of => Hash, :default => Hash.new
+attribute :additional, :kind_of => Hash, :default => {}
 
 def after_created
   unless name =~ /^[\w\.-]+$/
@@ -24,6 +24,6 @@ def after_created
   end
 
   if [action].compact.flatten.include?(:create)
-     raise Chef::Exceptions::ValidationFailed, "Sensu check #{name}: must either define subscribers, or has to be standalone." unless (subscribers || standalone)
+    raise Chef::Exceptions::ValidationFailed, "Sensu check #{name}: must either define subscribers, or has to be standalone." unless subscribers || standalone
   end
 end

@@ -24,9 +24,9 @@ enterprise_hash = {
   "repository" => {
     "credentials" => {
       "user" => node['sensu_test']['enterprise_repo_user'],
-      "password" => node['sensu_test']['enterprise_repo_pass']
-    }
-  }
+      "password" => node['sensu_test']['enterprise_repo_pass'],
+    },
+  },
 }
 
 set_sensu_state(node, "enterprise", enterprise_hash)
@@ -38,6 +38,4 @@ include_recipe "sensu::enterprise_service"
 
 # ServerSpec dependencies
 
-if platform?("ubuntu")
-  package "net-tools"
-end
+package "net-tools" if platform?("ubuntu")

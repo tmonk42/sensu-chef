@@ -3,7 +3,11 @@ def sensu_path
 end
 
 def load_current_resource
-  @sensu_svc = run_context.resource_collection.lookup("service[#{new_resource.service}]") rescue nil
+  @sensu_svc = begin
+                 run_context.resource_collection.lookup("service[#{new_resource.service}]")
+               rescue
+                 nil
+               end
   @sensu_svc ||= service new_resource.service do
     supports :status => true, :restart => true
     retries 3

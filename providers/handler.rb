@@ -6,16 +6,16 @@ end
 action :create do
   handler = Sensu::Helpers.select_attributes(
     new_resource,
-    %w[
+    %w(
       type filters mutator severities handlers
       command timeout socket pipe
-    ]
+    )
   ).merge(new_resource.additional)
 
   definition = {
     "handlers" => {
-      new_resource.name => Sensu::Helpers.sanitize(handler)
-    }
+      new_resource.name => Sensu::Helpers.sanitize(handler),
+    },
   }
 
   f = sensu_json_file @definition_path do

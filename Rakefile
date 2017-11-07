@@ -1,6 +1,6 @@
 #!/usr/bin/env rake
 
-task default: [:spec]
+task :default => [:spec]
 
 # stove helps us ship the cookbook
 begin
@@ -23,7 +23,7 @@ end
 begin
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:spec) do |t|
-    t.pattern = [ 'test/unit/**{,/*/**}/*_spec.rb' ]
+    t.pattern = ['test/unit/**{,/*/**}/*_spec.rb']
   end
 rescue LoadError
 end
