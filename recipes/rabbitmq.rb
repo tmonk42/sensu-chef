@@ -91,7 +91,11 @@ end
 rabbitmq = node["sensu"]["rabbitmq"].to_hash
 
 config_item = node["sensu"]["data_bag"]["config_item"]
-sensu_config = data_bag_item(data_bag_name, config_item) # missingok: true ???
+begin
+  sensu_config = data_bag_item(data_bag_name, config_item) # missingok: true ???
+rescue
+  # noop
+end
 
 if sensu_config && sensu_config["rabbitmq"].is_a?(Hash)
   rabbitmq = Chef::Mixin::DeepMerge.merge(rabbitmq, sensu_config["rabbitmq"])
@@ -109,7 +113,11 @@ end
   api
   server
 ).each do |service|
-  service_config = data_bag_item(data_bag_name, service) # missingok: true ???
+  begin
+    service_config = data_bag_item(data_bag_name, service) # missingok: true ???
+  rescue
+    # noop
+  end
 
   next unless service_config && service_config["rabbitmq"].is_a?(Hash)
 
